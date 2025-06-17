@@ -103,25 +103,44 @@
   </style>
 </head>
 <body>
+  <div id="login-container" style="margin-top: 30px; max-width: 500px; width: 90%;">
+    <p style="text-align:center;">🔐 शुरू करने के लिए अपना नाम दर्ज करें:</p>
+    <input type="text" id="username" placeholder="आपका नाम" style="width: 100%; padding: 10px; border-radius: 8px; border: none;">
+    <button onclick="startQuiz()" style="margin-top: 10px; padding: 10px 20px; border-radius: 8px; background: #00bcd4; color: white; border: none;">Start Quiz</button>
+  </div>
+  <div id="main-content" style="display:none;">
   <h1>🧠 ExamGod Quiz</h1>
   <div id="quiz-container"></div>
   <div id="review-container"></div>
 
-  <button class="fixed-button" onclick="showAnswers()">📋 उत्तर देखें</button>
+  <button class="fixed-button" id="review-btn" style="display:none;" onclick="showAnswers()">📋 उत्तर देखें</button>
   <marquee>📢 रोज़ाना Top 20 नए Question के लिए website पर आएं | ExamGod.in</marquee>
 
   <script>
+    let currentUser = "";
+    function startQuiz() {
+      const name = document.getElementById("username").value.trim();
+      if (!name) {
+        alert("कृपया नाम दर्ज करें!");
+        return;
+      }
+      currentUser = name;
+      document.getElementById("login-container").style.display = "none";
+      document.getElementById("main-content").style.display = "block";
+      document.getElementById("review-btn").style.display = "inline-block";
+      loadQuestions();
+    }
     let shown = false;
     function getAnswered() {
-      const saved = localStorage.getItem("answeredQuestions");
+      const saved = localStorage.getItem("answered_" + currentUser);
       return saved ? JSON.parse(saved) : [];
     }
     function markAnswered(q, ans) {
       const answered = getAnswered();
       if (!answered.includes(q)) {
         answered.push(q);
-        localStorage.setItem("answeredQuestions", JSON.stringify(answered));
-        localStorage.setItem("ans_" + q, ans);
+        localStorage.setItem("answered_" + currentUser, JSON.stringify(answered));
+        localStorage.setItem(currentUser + "_ans_" + q, ans);
       }
     }
 
@@ -176,7 +195,7 @@
     function showAnswers() {
       const review = document.getElementById("review-container");
       review.innerHTML = "";
-      const all = JSON.parse(localStorage.getItem("answeredQuestions") || "[]");
+      const all = JSON.parse(localStorage.getItem("answered_" + currentUser) || "[]");
       if (!all.length) {
         review.innerHTML = "<p>आपने अभी तक कोई उत्तर नहीं दिया है।</p>";
       } else {
@@ -188,7 +207,7 @@
             all.forEach(qText => {
               const q = map[qText];
               if (q) {
-                const userAns = localStorage.getItem("ans_" + q.question) || "N/A";
+                const userAns = localStorage.getItem(currentUser + "_ans_" + q.question) || "N/A";
                 const div = document.createElement("div");
                 div.style.marginBottom = "12px";
                 div.innerHTML = `<strong>प्रश्न:</strong> ${q.question}<br>
@@ -207,4 +226,5 @@
   </script>
 </body>
 </html>
+
 
