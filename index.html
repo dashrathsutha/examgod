@@ -4,36 +4,68 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="google-site-verification" content="googleed6b3eab0988fc9a.html" />
-  <title>ExamGod Quiz</title>
+  <title>ExamGod - फ्री हिंदी क्विज़ प्लेटफॉर्म</title>
   <link href="https://fonts.googleapis.com/css2?family=Baloo+2&display=swap" rel="stylesheet">
   <style>
     body {
       font-family: 'Baloo 2', sans-serif;
       margin: 0;
-      padding-bottom: 120px;
+      padding: 0;
       background: linear-gradient(to right, #004e92, #000428);
       color: white;
       display: flex;
       flex-direction: column;
       align-items: center;
+      min-height: 100vh;
     }
     h1 {
       margin-top: 30px;
-      font-size: 2.5rem;
-      text-align: center;
-      border: 3px solid green;
+      font-size: 2em;
+      text-shadow: 2px 2px 5px #000;
       padding: 10px 20px;
-      border-radius: 15px;
+      border: 4px solid green;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 500px;
+      text-align: center;
+      box-sizing: border-box;
     }
-    .question-box {
+    #login-container, .question-box, #review-box {
       background-color: #ffffff10;
       border-radius: 20px;
       padding: 16px;
-      margin: 16px 10px;
+      margin: 20px;
+      width: 100%;
       max-width: 500px;
-      width: 95%;
       box-shadow: 0 0 20px #0072ff;
+      animation: glow 4s infinite alternate;
       backdrop-filter: blur(6px);
+    }
+    input[type="text"] {
+      padding: 10px;
+      width: 80%;
+      border-radius: 8px;
+      border: none;
+      margin-bottom: 10px;
+    }
+    button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      background-color: #00bcd4;
+      color: white;
+      cursor: pointer;
+      margin: 5px;
+    }
+    #review-btn {
+      position: fixed;
+      bottom: 70px;
+      right: 20px;
+      z-index: 999;
+    }
+    @keyframes glow {
+      from { box-shadow: 0 0 10px #00c6ff; }
+      to { box-shadow: 0 0 25px #0072ff; }
     }
     .option {
       background-color: #ffffff20;
@@ -55,13 +87,6 @@
       background-color: #400000;
       animation: shake 0.4s;
     }
-    .explanation {
-      margin-top: 10px;
-      background: #ffffff20;
-      padding: 10px;
-      border-radius: 10px;
-      display: none;
-    }
     @keyframes shake {
       0% { transform: translateX(0); }
       25% { transform: translateX(-5px); }
@@ -69,79 +94,78 @@
       75% { transform: translateX(-5px); }
       100% { transform: translateX(0); }
     }
-    #review-container {
-      display: none;
+    .explanation {
+      margin-top: 10px;
       background: #ffffff20;
-      color: white;
       padding: 10px;
-      margin: 10px;
       border-radius: 10px;
-      max-width: 600px;
+      display: none;
     }
-    button.fixed-button {
-      position: fixed;
-      bottom: 60px;
-      left: 50%;
-      transform: translateX(-50%);
-      padding: 12px 24px;
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 1rem;
-      z-index: 1000;
-    }
-    marquee {
+    #scrolling-bar {
       position: fixed;
       bottom: 0;
       width: 100%;
-      background: #2196F3;
+      background-color: #00bcd4;
       color: white;
-      padding: 8px 0;
+      text-align: center;
+      padding: 8px;
       font-weight: bold;
+      animation: slide 20s linear infinite;
+    }
+    @keyframes slide {
+      0% { transform: translateX(100%); }
+      100% { transform: translateX(-100%); }
     }
   </style>
 </head>
 <body>
-  <div id="login-container" style="margin-top: 30px; max-width: 500px; width: 90%;">
-    <p style="text-align:center;">🔐 शुरू करने के लिए अपना नाम दर्ज करें:</p>
-    <input type="text" id="username" placeholder="आपका नाम" style="width: 100%; padding: 10px; border-radius: 8px; border: none;">
-    <button onclick="startQuiz()" style="margin-top: 10px; padding: 10px 20px; border-radius: 8px; background: #00bcd4; color: white; border: none;">Start Quiz</button>
-  </div>
-  <div id="main-content" style="display:none;">
   <h1>🧠 ExamGod Quiz</h1>
-  <div id="quiz-container"></div>
-  <div id="review-container"></div>
-
-  <button class="fixed-button" id="review-btn" style="display:none;" onclick="showAnswers()">📋 उत्तर देखें</button>
-  <marquee>📢 रोज़ाना Top 20 नए Question के लिए website पर आएं | ExamGod.in</marquee>
+  <div id="login-container">
+    <p>अपना नाम दर्ज करें शुरू करने के लिए:</p>
+    <input type="text" id="username" placeholder="आपका नाम">
+    <button onclick="startQuiz()">Start Quiz</button>
+  </div>
+  <div id="quiz-container" style="display:none;"></div>
+  <button onclick="showReview()" style="display:none;" id="review-btn">📋 उत्तर देखें</button>
+  <div id="review-box" style="display:none;"></div>
+  <div id="scrolling-bar">📢 रोज़ाना Top 20 नए Questions के लिए Website पर आएं! 📢</div>
 
   <script>
-    let currentUser = "";
+    let shown = false;
+    let username = "";
+    const answeredKey = "answeredQuestions";
+    const answerLogKey = "answerLog";
+
     function startQuiz() {
-      const name = document.getElementById("username").value.trim();
-      if (!name) {
-        alert("कृपया नाम दर्ज करें!");
-        return;
-      }
-      currentUser = name;
-      document.getElementById("login-container").style.display = "none";
-      document.getElementById("main-content").style.display = "block";
-      document.getElementById("review-btn").style.display = "inline-block";
+      const name = document.getElementById('username').value.trim();
+      if (!name) return alert("कृपया नाम भरें!");
+      username = name;
+      document.getElementById('login-container').style.display = 'none';
+      document.getElementById('quiz-container').style.display = 'block';
+      document.getElementById('review-btn').style.display = 'inline-block';
       loadQuestions();
     }
-    let shown = false;
+
     function getAnswered() {
-      const saved = localStorage.getItem("answered_" + currentUser);
+      const saved = localStorage.getItem(answeredKey);
       return saved ? JSON.parse(saved) : [];
     }
-    function markAnswered(q, ans) {
+
+    function getAnswerLog() {
+      const saved = localStorage.getItem(answerLogKey);
+      return saved ? JSON.parse(saved) : [];
+    }
+
+    function markAnswered(questionText, selectedAnswer, correctAnswer) {
       const answered = getAnswered();
-      if (!answered.includes(q)) {
-        answered.push(q);
-        localStorage.setItem("answered_" + currentUser, JSON.stringify(answered));
-        localStorage.setItem(currentUser + "_ans_" + q, ans);
+      if (!answered.includes(questionText)) {
+        answered.push(questionText);
+        localStorage.setItem(answeredKey, JSON.stringify(answered));
       }
+
+      const log = getAnswerLog();
+      log.push({ question: questionText, answer: selectedAnswer, correct: correctAnswer });
+      localStorage.setItem(answerLogKey, JSON.stringify(log));
     }
 
     function loadQuestions() {
@@ -174,8 +198,8 @@
                   div.classList.add('wrong');
                 }
                 shown = true;
-                document.getElementById("exp_" + q.question).style.display = "block";
-                markAnswered(q.question, opt);
+                showExplanation();
+                markAnswered(q.question, opt, q.answer);
               };
 
               box.appendChild(div);
@@ -183,48 +207,35 @@
 
             const expl = document.createElement('div');
             expl.className = 'explanation';
-            expl.id = "exp_" + q.question;
-            expl.textContent = "📘 व्याख्या: " + q.explanation;
+            expl.textContent = "व्याख्या: " + q.explanation;
             box.appendChild(expl);
+
+            function showExplanation() {
+              expl.style.display = 'block';
+            }
 
             container.appendChild(box);
           });
         });
     }
 
-    function showAnswers() {
-      const review = document.getElementById("review-container");
-      review.innerHTML = "";
-      const all = JSON.parse(localStorage.getItem("answered_" + currentUser) || "[]");
-      if (!all.length) {
-        review.innerHTML = "<p>आपने अभी तक कोई उत्तर नहीं दिया है।</p>";
-      } else {
-        fetch('questions.json')
-          .then(res => res.json())
-          .then(data => {
-            const map = {};
-            data.forEach(q => map[q.question] = q);
-            all.forEach(qText => {
-              const q = map[qText];
-              if (q) {
-                const userAns = localStorage.getItem(currentUser + "_ans_" + q.question) || "N/A";
-                const div = document.createElement("div");
-                div.style.marginBottom = "12px";
-                div.innerHTML = `<strong>प्रश्न:</strong> ${q.question}<br>
-                                 <strong>आपका उत्तर:</strong> ${userAns}<br>
-                                 <strong>सही उत्तर:</strong> ${q.answer}<br>
-                                 <strong>📘 व्याख्या:</strong> ${q.explanation}`;
-                review.appendChild(div);
-              }
-            });
-          });
-      }
-      review.style.display = "block";
-    }
+    function showReview() {
+      const reviewBox = document.getElementById('review-box');
+      reviewBox.innerHTML = "<h3>आपके द्वारा दिए गए उत्तर:</h3>";
+      const log = getAnswerLog();
 
-    window.onload = loadQuestions;
+      log.forEach(entry => {
+        const div = document.createElement('div');
+        div.className = 'question-box';
+        div.innerHTML = `<strong>प्रश्न:</strong> ${entry.question}<br/><strong>आपका उत्तर:</strong> ${entry.answer}<br/><strong>सही उत्तर:</strong> ${entry.correct}`;
+        reviewBox.appendChild(div);
+      });
+
+      reviewBox.style.display = 'block';
+    }
   </script>
 </body>
 </html>
+
 
 
