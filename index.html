@@ -168,16 +168,17 @@
     let currentUser = "";
     let shown = false;
     function startQuiz() {
-      const name = document.getElementById("username").value.trim();
-      if (!name) {
-        alert("कृपया नाम दर्ज करें!");
-        return;
-      }
-      currentUser = name;
-      document.getElementById("login-container").style.display = "none";
-      document.getElementById("main-content").style.display = "block";
-      document.getElementById("review-btn").style.display = "inline-block";
-      loadQuestions();
+  const name = document.getElementById("username").value.trim();
+  if (!name) {
+    alert("कृपया नाम दर्ज करें!");
+    return;
+  }
+  currentUser = name;
+  localStorage.setItem("currentUser", currentUser);
+  document.getElementById("login-container").style.display = "none";
+  document.getElementById("main-content").style.display = "block";
+  document.getElementById("review-btn").style.display = "inline-block";
+  loadQuestions();
     }
     function getAnswered() {
       const saved = localStorage.getItem("answered_" + currentUser);
@@ -272,8 +273,29 @@
   }
   review.style.display = "block";
     }
-  </script>
+  window.onload = () => {
+  const savedUser = localStorage.getItem("currentUser");
+  if (savedUser) {
+    currentUser = savedUser;
+    document.getElementById("login-container").style.display = "none";
+    document.getElementById("main-content").style.display = "block";
+    document.getElementById("review-btn").style.display = "inline-block";
+    loadQuestions();
+  }
+};
+window.onload = function () {
+  const savedUser = localStorage.getItem("currentUser");
+  if (savedUser) {
+    currentUser = savedUser;
+    document.getElementById("login-container").style.display = "none";
+    document.getElementById("main-content").style.display = "block";
+    document.getElementById("review-btn").style.display = "inline-block";
+    loadQuestions();
+  }
+};
+</script>
 </body>
 </html>
+
 
 
