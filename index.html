@@ -18,22 +18,28 @@
       align-items: center;
       min-height: 100vh;
     }
+
     h1 {
       margin-top: 30px;
       font-size: 2em;
       text-shadow: 2px 2px 5px #000;
+      padding: 10px 20px;
+      border: 4px solid brown;
+      border-radius: 12px;
     }
+
     #login-container, .question-box {
       background-color: #ffffff10;
       border-radius: 20px;
       padding: 16px;
       margin: 20px;
-      width: 100%; max-width: 500px;
-      width: 90%;
+      width: 100%;
+      max-width: 500px;
       box-shadow: 0 0 20px #0072ff;
       animation: glow 4s infinite alternate;
       backdrop-filter: blur(6px);
     }
+
     input[type="text"] {
       padding: 10px;
       width: 80%;
@@ -41,6 +47,7 @@
       border: none;
       margin-bottom: 10px;
     }
+
     button {
       padding: 10px 20px;
       border: none;
@@ -49,10 +56,12 @@
       color: white;
       cursor: pointer;
     }
+
     @keyframes glow {
       from { box-shadow: 0 0 10px #00c6ff; }
       to { box-shadow: 0 0 25px #0072ff; }
     }
+
     .option {
       background-color: #ffffff20;
       padding: 10px;
@@ -61,18 +70,22 @@
       cursor: pointer;
       transition: all 0.3s;
     }
+
     .option:hover {
       background-color: #ffffff40;
     }
+
     .correct {
       border: 2px solid #0f0;
       background-color: #004d00;
     }
+
     .wrong {
       border: 2px solid #f00;
       background-color: #400000;
       animation: shake 0.4s;
     }
+
     @keyframes shake {
       0% { transform: translateX(0); }
       25% { transform: translateX(-5px); }
@@ -80,6 +93,7 @@
       75% { transform: translateX(-5px); }
       100% { transform: translateX(0); }
     }
+
     .explanation {
       margin-top: 10px;
       background: #ffffff20;
@@ -136,7 +150,7 @@
             const box = document.createElement('div');
             box.className = 'question-box';
 
-            const ques = document.createElement('h2 { font-size: 1.2rem; margin-bottom: 15px; }');
+            const ques = document.createElement('h2');
             ques.textContent = q.question;
             box.appendChild(ques);
 
@@ -176,4 +190,5 @@
   </script>
 </body>
 </html>
+
 
