@@ -20,15 +20,15 @@
     }
     h1 {
       margin-top: 30px;
-      font-size: 3em;
+      font-size: 2em;
       text-shadow: 2px 2px 5px #000;
     }
     #login-container, .question-box {
       background-color: #ffffff10;
       border-radius: 20px;
-      padding: 20px;
+      padding: 16px;
       margin: 20px;
-      max-width: 600px;
+      width: 100%; max-width: 500px;
       width: 90%;
       box-shadow: 0 0 20px #0072ff;
       animation: glow 4s infinite alternate;
@@ -136,7 +136,7 @@
             const box = document.createElement('div');
             box.className = 'question-box';
 
-            const ques = document.createElement('h2');
+            const ques = document.createElement('h2 { font-size: 1.2rem; margin-bottom: 15px; }');
             ques.textContent = q.question;
             box.appendChild(ques);
 
@@ -176,3 +176,4 @@
   </script>
 </body>
 </html>
+
