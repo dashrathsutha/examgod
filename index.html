@@ -6,17 +6,14 @@
   <meta name="google-site-verification" content="googleed6b3eab0988fc9a.html" />
   <meta name="description" content="ExamGod - राजस्थान GK, NEET, BSTC के लिए मुफ्त हिंदी क्विज़ प्लेटफॉर्म। रोज़ाना नए सवाल, explanation सहित।">
   <meta name="keywords" content="राजस्थान जीके क्विज, BSTC NEET क्विज, Hindi quiz, Rajasthan GK, ExamGod quiz">
-  
   <title>ExamGod Quiz</title>
   <link href="https://fonts.googleapis.com/css2?family=Baloo+2&display=swap" rel="stylesheet">
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    /* --- styling aapka original hi hai --- */
+    * { box-sizing: border-box; }
     body {
       font-family: 'Baloo 2', sans-serif;
-      margin: 0;
-      padding: 0 0 100px 0;
+      margin: 0; padding: 0 0 100px 0;
       background: linear-gradient(to right, #004e92, #000428);
       color: white;
       min-height: 100vh;
@@ -24,11 +21,7 @@
       flex-direction: column;
       align-items: center;
     }
-    h1 {
-      margin-top: 30px;
-      font-size: 2.5rem;
-      text-align: center;
-    }
+    h1 { margin-top: 30px; font-size: 2.5rem; text-align: center; }
     #login-container {
       margin-top: 30px;
       max-width: 500px;
@@ -40,11 +33,7 @@
       backdrop-filter: blur(6px);
       text-align: center;
     }
-    #main-content {
-      display: none;
-      width: 100%;
-      max-width: 600px;
-    }
+    #main-content { display: none; width: 100%; max-width: 600px; }
     .question-box {
       background-color: #ffffff10;
       border-radius: 20px;
@@ -62,18 +51,9 @@
       cursor: pointer;
       transition: all 0.3s;
     }
-    .option:hover {
-      background-color: #ffffff40;
-    }
-    .correct {
-      border: 2px solid #0f0;
-      background-color: #004d00;
-    }
-    .wrong {
-      border: 2px solid #f00;
-      background-color: #400000;
-      animation: shake 0.4s;
-    }
+    .option:hover { background-color: #ffffff40; }
+    .correct { border: 2px solid #0f0; background-color: #004d00; }
+    .wrong { border: 2px solid #f00; background-color: #400000; animation: shake 0.4s; }
     .explanation {
       margin-top: 10px;
       background: #ffffff20;
@@ -164,9 +144,10 @@
   <div id="scrollbar-wrapper">
     <span>📢 रोज़ाना Top 20 नए Question के लिए website पर आएं | ExamGod.in</span>
   </div>
+
   <script>
     let currentUser = "";
-    let shown = false;
+
     function startQuiz() {
       const name = document.getElementById("username").value.trim();
       if (!name) {
@@ -174,15 +155,18 @@
         return;
       }
       currentUser = name;
+      localStorage.setItem("currentUser", currentUser);
       document.getElementById("login-container").style.display = "none";
       document.getElementById("main-content").style.display = "block";
       document.getElementById("review-btn").style.display = "inline-block";
       loadQuestions();
     }
+
     function getAnswered() {
       const saved = localStorage.getItem("answered_" + currentUser);
       return saved ? JSON.parse(saved) : [];
     }
+
     function markAnswered(q, ans) {
       const answered = getAnswered();
       if (!answered.includes(q)) {
@@ -191,6 +175,7 @@
         localStorage.setItem(currentUser + "_ans_" + q, ans);
       }
     }
+
     function loadQuestions() {
       fetch('questions.json')
         .then(res => res.json())
@@ -208,19 +193,20 @@
             ques.textContent = q.question;
             box.appendChild(ques);
 
+            let answeredThis = false;
             q.options.forEach(opt => {
               const div = document.createElement('div');
               div.className = 'option';
               div.textContent = opt;
 
               div.onclick = () => {
-                if (shown) return;
+                if (answeredThis) return;
                 if (opt === q.answer) {
                   div.classList.add('correct');
                 } else {
                   div.classList.add('wrong');
                 }
-                shown = true;
+                answeredThis = true;
                 document.getElementById("exp_" + q.question).style.display = "block";
                 markAnswered(q.question, opt);
               };
@@ -238,8 +224,14 @@
           });
         });
     }
+
     function showAnswers() {
       const review = document.getElementById("review-container");
+      if (review.style.display === "block") {
+        review.style.display = "none";
+        return;
+      }
+
       review.innerHTML = "";
       const all = JSON.parse(localStorage.getItem("answered_" + currentUser) || "[]");
       if (!all.length) {
@@ -267,6 +259,19 @@
       }
       review.style.display = "block";
     }
+
+    // Restore on refresh:
+    window.onload = () => {
+      const savedUser = localStorage.getItem("currentUser");
+      if (savedUser) {
+        currentUser = savedUser;
+        document.getElementById("login-container").style.display = "none";
+        document.getElementById("main-content").style.display = "block";
+        document.getElementById("review-btn").style.display = "inline-block";
+        loadQuestions();
+      }
+    };
   </script>
 </body>
 </html>
+
