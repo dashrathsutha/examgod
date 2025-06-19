@@ -225,40 +225,47 @@
         });
     }
 
-    function showAnswers() {
-      const review = document.getElementById("review-container");
-      if (review.style.display === "block") {
-        review.style.display = "none";
-        return;
-      }
+function showAnswers() {
+  const review = document.getElementById("review-container");
 
-      review.innerHTML = "";
-      const all = JSON.parse(localStorage.getItem("answered_" + currentUser) || "[]");
-      if (!all.length) {
-        review.innerHTML = "<p>आपने अभी तक कोई उत्तर नहीं दिया है।</p>";
-      } else {
-        fetch('questions.json')
-          .then(res => res.json())
-          .then(data => {
-            const map = {};
-            data.forEach(q => map[q.question] = q);
-            all.forEach(qText => {
-              const q = map[qText];
-              if (q) {
-                const userAns = localStorage.getItem(currentUser + "_ans_" + q.question) || "N/A";
-                const div = document.createElement("div");
-                div.style.marginBottom = "12px";
-                div.innerHTML = `<strong>प्रश्न:</strong> ${q.question}<br>
-                                 <strong>आपका उत्तर:</strong> ${userAns}<br>
-                                 <strong>सही उत्तर:</strong> ${q.answer}<br>
-                                 <strong>📘 व्याख्या:</strong> ${q.explanation}`;
-                review.appendChild(div);
-              }
-            });
-          });
-      }
-      review.style.display = "block";
-    }
+  // अगर पहले से खुला है, तो बंद कर दो
+  if (review.style.display === "block") {
+    review.style.display = "none";
+    return;
+  }
+
+  review.innerHTML = "";
+  const all = JSON.parse(localStorage.getItem("answered_" + currentUser) || "[]");
+  if (!all.length) {
+    review.innerHTML = "<p>आपने अभी तक कोई उत्तर नहीं दिया है।</p>";
+  } else {
+    fetch('questions.json')
+      .then(res => res.json())
+      .then(data => {
+        const map = {};
+        data.forEach(q => map[q.question] = q);
+        all.forEach(qText => {
+          const q = map[qText];
+          if (q) {
+            const userAns = localStorage.getItem(currentUser + "_ans_" + q.question) || "N/A";
+            const div = document.createElement("div");
+            div.style.marginBottom = "12px";
+            div.innerHTML = `<strong>प्रश्न:</strong> ${q.question}<br>
+                             <strong>आपका उत्तर:</strong> ${userAns}<br>
+                             <strong>सही उत्तर:</strong> ${q.answer}<br>
+                             <strong>📘 व्याख्या:</strong> ${q.explanation}`;
+            review.appendChild(div);
+          }
+        });
+
+        // 👉 Scroll to review section
+        review.scrollIntoView({ behavior: "smooth" });
+      });
+  }
+
+  review.style.display = "block";
+}
+
 
     // Restore on refresh:
     window.onload = () => {
