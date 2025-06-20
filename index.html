@@ -19,6 +19,72 @@
 </script>
   
   <style>
+    .affiliate-section {
+  padding: 20px;
+  background: #f4f4f4;
+  color: #000;
+  text-align: center;
+}
+
+.affiliate-section h2 {
+  margin-bottom: 20px;
+  font-size: 2rem;
+  color: #222;
+}
+
+.affiliate-products {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+
+.affiliate-card {
+  background: white;
+  padding: 15px;
+  width: 200px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  transition: transform 0.3s;
+}
+
+.affiliate-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0 15px rgba(0,0,0,0.2);
+}
+
+.affiliate-card img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.affiliate-card h4 {
+  font-size: 1rem;
+  margin: 10px 0 5px;
+}
+
+.affiliate-card p {
+  margin: 0 0 10px;
+  color: #333;
+}
+
+.affiliate-card a {
+  display: inline-block;
+  padding: 8px 12px;
+  background: #0073e6;
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: bold;
+}
+
+@media (max-width: 500px) {
+  .affiliate-card {
+    width: 90%;
+  }
+}
+    
     /* --- styling aapka original hi hai --- */
     * { box-sizing: border-box; }
     body {
